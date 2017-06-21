@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Knowledge Graph Generator</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<style type="text/css">
+			.canvas {
+				width:100%;
+				height:500px;
+			}
+			.updates {
+				font-size: 10px;
+				height: 100px;
+				overflow-y: scroll;
+			}
+		</style>
+		<script src="https://d3js.org/d3.v3.min.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<h2>Knowledge Graph <small>- Dr. James Gopsill</small></h2>
+			<hr >
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Step One</h3>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label for="usr">Select Files:</label>
+						<input type="file" id="reports" accept='text/plain' multiple />
+					</div>
+					<div class="form-group">
+						<label for="encoding">Encoding:</label>
+						<select class="form-control" id="encoding">
+							<option>UTF-8</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label>Word count cutoff:</label>
+						<input type="number" id="cutoff" min="1" max="1000" value="30">
+					</div>
+					<div class="form-group">
+						<label>Word co-ocurrences cutoff:</label>
+						<input type="number" id="cocutoff" min="1" max="1000" value="10">
+					</div>
+					<button id="reportsBtn" class="btn btn-primary">Generate Graph</button>
+				</div>
+				<div id="processingUpdates" class="updates panel-footer">
+				</div>
+			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Step Two - Visualisation</h3>
+				</div>
+				<div id="canvas" class="canvas panel-body">
+				</div>
+				<div class="panel-footer">
+					<div class="form-group">
+						<label>Charge: <span id="chargeValue">-120</span></label>
+						<input type="range" name="chargeSlider" id="chargeSlider" value="-120" min="-1000" max="1000">
+					</div>
+					<div class="form-group">
+						<label>Link Distance: <span id="linkValue">20</span></label>
+						<input type="range" name="linkSlider" id="linkSlider" value="20" min="-500" max="500">
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+		<script src="bundle.js"></script>
+	</body>
+</html>
