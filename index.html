@@ -1,78 +1,114 @@
 <!doctype html>
 <html>
-	<head>
-		<title>Knowledge Graph Generator</title>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-		<style type="text/css">
-			@import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700');
-			* {
-				font-family: 'Quicksand', sans-serif;
-			}
-			.canvas {
-				width:100%;
-				height:500px;
-			}
-			.updates {
-				font-size: 10px;
-				height: 100px;
-				overflow-y: scroll;
-			}
-		</style>
-		<script src="https://d3js.org/d3.v3.min.js"></script>
-	</head>
-	<body>
-		<div class="container">
-			<h2>Knowledge Graphs <small>- <a href="https://jamesgopsill.github.io/">Dr. James Gopsill</a></small></h2>
-			<hr >
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">Step One</h3>
-				</div>
-				<div class="panel-body">
-					<div class="form-group">
-						<label for="usr">Select Files:</label>
-						<input type="file" id="reports" accept='text/plain' multiple />
-					</div>
-					<div class="form-group">
-						<label for="encoding">Encoding:</label>
-						<select class="form-control" id="encoding">
-							<option>UTF-8</option>
-						</select>
-					</div>
-					<div class="form-group">
-						<label>Word count cutoff:</label>
-						<input type="number" id="cutoff" min="1" max="1000" value="30">
-					</div>
-					<div class="form-group">
-						<label>Word co-ocurrences cutoff:</label>
-						<input type="number" id="cocutoff" min="1" max="1000" value="10">
-					</div>
-					<button id="reportsBtn" class="btn btn-primary">Generate Graph</button>
-				</div>
-				<div id="processingUpdates" class="updates panel-footer">
-				</div>
-			</div>
+  <head>
+    <title>Knowledge Graph Generator</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <style type="text/css">
+      @import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700');
+      * {
+        font-family: 'Quicksand', sans-serif
+      }
+      .canvas {
+        width:100%;
+        height:500px;
+      }
+      .updates {
+        font-size: 10px;
+        height: 50px;
+        overflow-y: scroll;
+      }
+    </style>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Knowledge Graphs <small>- <a href="https://jamesgopsill.github.io/">Dr. James Gopsill</a></small></h2>
+      <hr >
+      <p class="lead">How well can you utilise the knowldge that is stored within you reports?</p>
+      <p>The Language of Collaborative Manufacturing project has been working hard to develop novel new methods to access, visualise and interact with the knowledge that is contained within engineering reports. This page shows how graph visualisations can be used to understand the connected nature of the knowledge that is stored within your reports. This technique has been deployed within the National Composites Centre and Formula Student Project at the University of Bath and Bristol to help their engineers search, retrieve and navgiate through the vast knowledge stored within their reprositories.</p>
+      <p>The demo demonstrates the process that takes you from a set of word documents or pdfs and turns this information into a graph that can be visualised and navigated. We hope it shows you the potential for increasing the re-usability of your reports as well as how quick the process is.</p>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Step One - Select your files</h3>
+        </div>
+        <div class="panel-body">
+          <p>The first step requires the text from all the reports to be extracted into .txt files. Once the text has been extracted, the files can be uploaded to the tool here.</p>
+          <div class="form-group">
+            <label for="usr">Select Files:</label>
+            <input type="file" id="reports" accept='text/plain' multiple />
+          </div>
+          <div class="form-group">
+            <label for="encoding">Confirm the encoding scheme for the files:</label>
+            <select class="form-control" id="encoding">
+              <option>UTF-8</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">Step Two - Visualisation</h3>
-				</div>
-				<div id="canvas" class="canvas panel-body">
-				</div>
-				<div class="panel-footer">
-					<div class="form-group">
-						<label>Charge: <span id="chargeValue">-120</span></label>
-						<input type="range" name="chargeSlider" id="chargeSlider" value="-120" min="-1000" max="1000">
-					</div>
-					<div class="form-group">
-						<label>Link Distance: <span id="linkValue">20</span></label>
-						<input type="range" name="linkSlider" id="linkSlider" value="20" min="-500" max="500">
-					</div>
-				</div>
-			</div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Step Two - Set limits</h3>
+          </div>
+          <div class="panel-body">
+          <p>Now we need to determine what the limits we wish to set so the graph only shows use the most pertinent information. In this example, we're using two simple metrics, the number of times the word has to appear to be included and the minimum number of times the words have to appear within the same paragraph in order for a connection to be made.</p>
+          <div class="form-group">
+            <label>Word count cutoff:</label>
+            <input type="number" id="cutoff" min="1" max="1000" value="30">
+          </div>
+          <div class="form-group">
+            <label>Word co-occurrence cutoff:</label>
+            <input type="number" id="cocutoff" min="1" max="1000" value="10">
+          </div>
+          <p>Once selected, we can generate the graph!</p>
+          <button id="reportsBtn" class="btn btn-primary">Generate Graph</button>
+        </div>
+        <div id="processingUpdates" class="updates panel-footer">
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Step Three - Visualise & Interact</h3>
+        </div>
+        <div class="panel-body">
+          <p>The resulting graph will be displayed here and you can interact with it using you mouse and/or fingers if you're using a tablet. Terms will stick in position once you have moved them so that you can form your own groups and make sense of how the knowledge is connected within your company.</p>
+          <p>You can also make adjustments to how the terms group by adjusting the values below.</p>
+          <hr>
+          <div id="canvas" class="canvas"></div>
+        </div>
+        <div class="panel-footer">
+          <div class="form-group">
+            <label>Term Attraction: <span id="chargeValue">-120</span></label>
+            <input type="range" name="chargeSlider" id="chargeSlider" value="-120" min="-1000" max="1000">
+          </div>
+          <div class="form-group">
+            <label>Edge Length: <span id="linkValue">20</span></label>
+            <input type="range" name="linkSlider" id="linkSlider" value="20" min="-500" max="500">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Step Four - Next Steps</h3>
+        </div>
+        <div class="panel-body">
+          <p>This simple process alongside further analysis of the content of the reports has been used to great effect with our collaborators to:</p>
+          <ul>
+            <li>Automatic clustering and identification of core skills and competencies within a company</li>
+            <li>Map skills and competencies with individuals in the company</li>
+            <li>Search & retrieval of relevent documents for future projects</li>
+            <li>Identifying new areas for R & D development</li>
+            <li>Marketing a companies skills and competencies</li>
+          </ul>
+          <p>The process has been purpose built to be automated and provide real-time updates on the developments on your knowledge in your company</p>
+          <p>If you would like to know more about the process and how it could be implemented within your company, please contact <a href="mailto:J.A.Gopsill@bath.ac.uk">J.A.Gopsill@bath.ac.uk</a></p>
+        </div>
+      </div>
 
 
-		</div>
-		<script src="bundle.js"></script>
-	</body>
+    </div>
+    <script src="bundle.js"></script>
+  </body>
 </html>
